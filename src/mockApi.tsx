@@ -1,4 +1,6 @@
-const mockTasks = [
+import { Task } from "./types";
+
+const mockTasks: Task[] = [
     {
         id: 1,
         title: "Buy groceries",
@@ -17,17 +19,19 @@ const mockTasks = [
     },
 ];
 
-export const fetchTasks = async () => {
+// Fetch all tasks
+export const fetchTasks = async (): Promise<Task[]> => {
     return new Promise((resolve) => {
-        setTimeout(() => resolve([...mockTasks]), 500);
+        setTimeout(() => resolve([...mockTasks]), 500); // Simulate network delay
     });
 };
 
-export const createTask = async (task) => {
+// Create a new task
+export const createTask = async (task: Omit<Task, "id" | "createdAt" | "updatedAt">): Promise<Task> => {
     return new Promise((resolve) => {
-        const newTask = {
-            id: Date.now(),
+        const newTask: Task = {
             ...task,
+            id: Date.now(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
@@ -36,13 +40,14 @@ export const createTask = async (task) => {
     });
 };
 
-export const updateTask = async (id, updatedTask) => {
+// Update an existing task
+export const updateTask = async (id: number, updatedData: Partial<Task>): Promise<Task> => {
     return new Promise((resolve, reject) => {
         const index = mockTasks.findIndex((task) => task.id === id);
         if (index !== -1) {
             mockTasks[index] = {
                 ...mockTasks[index],
-                ...updatedTask,
+                ...updatedData,
                 updatedAt: new Date().toISOString(),
             };
             setTimeout(() => resolve(mockTasks[index]), 500);
@@ -52,7 +57,8 @@ export const updateTask = async (id, updatedTask) => {
     });
 };
 
-export const deleteTask = async (id) => {
+// Delete a task
+export const deleteTask = async (id: number): Promise<{ success: boolean }> => {
     return new Promise((resolve, reject) => {
         const index = mockTasks.findIndex((task) => task.id === id);
         if (index !== -1) {
@@ -64,7 +70,8 @@ export const deleteTask = async (id) => {
     });
 };
 
-export const toggleTaskStatus = async (id) => {
+// Toggle the status of a task
+export const toggleTaskStatus = async (id: number): Promise<Task> => {
     return new Promise((resolve, reject) => {
         const index = mockTasks.findIndex((task) => task.id === id);
         if (index !== -1) {

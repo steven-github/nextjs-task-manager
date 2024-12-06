@@ -1,34 +1,44 @@
 import { createTask, deleteTask, fetchTasks, toggleTaskStatus, updateTask } from "../mockApi";
 import { useEffect, useState } from "react";
 
-export default function Home() {
-    const [tasks, setTasks] = useState([]);
-    const [form, setForm] = useState({ title: "", description: "", status: "Pending" });
-    const [editingTask, setEditingTask] = useState(null);
+import { Task } from "@/types";
 
+export default function Home() {
+    const [tasks, setTasks] = useState<Task[]>([]); // State for tasks
+    const [form, setForm] = useState({ title: "", description: "", status: "Pending" }); // State for form
+    const [editingTask, setEditingTask] = useState<Task | null>(null); // State for editing
+
+    // Fetch tasks on component mount
     useEffect(() => {
-        fetchTasks().then(setTasks);
+        fetchTasks()
+            .then(setTasks)
+            .catch((err) => console.error("Error fetching tasks:", err));
     }, []);
 
-    const handleInputChange = (e) => {
+    // Handle form input changes
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
     };
 
-    const handleSubmit = async (e) => {
+    // Handle form submission
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (editingTask) {
+            // Update task
             const updatedTask = await updateTask(editingTask.id, form);
             setTasks((prev) => prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
             setEditingTask(null);
         } else {
+            // Create new task
             const newTask = await createTask(form);
             setTasks((prev) => [...prev, newTask]);
         }
         setForm({ title: "", description: "", status: "Pending" });
     };
 
-    const handleEdit = (task) => {
+    // Handle edit action
+    const handleEdit = (task: Task) => {
         setForm({
             title: task.title,
             description: task.description,
@@ -37,12 +47,14 @@ export default function Home() {
         setEditingTask(task);
     };
 
-    const handleDelete = async (id) => {
+    // Handle delete action
+    const handleDelete = async (id: number) => {
         await deleteTask(id);
         setTasks((prev) => prev.filter((task) => task.id !== id));
     };
 
-    const handleToggleStatus = async (id) => {
+    // Handle toggle status action
+    const handleToggleStatus = async (id: number) => {
         const updatedTask = await toggleTaskStatus(id);
         setTasks((prev) => prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
     };

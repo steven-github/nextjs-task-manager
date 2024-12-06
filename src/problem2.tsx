@@ -9,7 +9,7 @@
 // 	•	Example Output:
 // "a3b2c4"
 
-function compressString(input) {
+function compressString(input: string) {
     let compressed = "";
     let count = 1;
 

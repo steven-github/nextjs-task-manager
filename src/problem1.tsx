@@ -9,7 +9,7 @@
 // 	•	Example Output:
 // 6 (subarray: [4,-1,2,1])
 
-function maxSubArray(nums) {
+function maxSubArray(nums: number[]) {
     let maxSum = nums[0];
     let currentSum = nums[0];
 
